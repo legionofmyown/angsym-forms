@@ -1,0 +1,4 @@
+angsym:
+    resource: "@AngsymBundle/Controller/"
+    type:     annotation
+    prefix:   /
