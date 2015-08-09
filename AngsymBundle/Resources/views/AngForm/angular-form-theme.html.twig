@@ -15,14 +15,23 @@
 {% block form_start %}
     {% spaceless %}
     <script>
-        angular.module('{{ angsym_module }}').controller('angSymForm_{{ form.vars.name }}_Ctrl', function ($scope, $compile) {
+        angular.module('{{ angsym_module }}').controller('angSymForm_{{ form.vars.name }}_Ctrl', function ($scope) {
+            $scope.action = '{{ action }}';
+            $scope.method = '{{ form_method|upper }}';
             $scope.data = {};
+
             $scope.submit = function() {
-                $scope.formResponse = $compile(data)($scope);
+                $http({
+                    method  : $scope.method,
+                    url     : $scope.action,
+                    data    : $scope.data,
+                    headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+                }).success(function(data) {
+                    console.log(data);
+                });
             };
         });
     </script>
-    <div ng-bind-html-unsafe="formResponse" ng-controller="angSymForm_{{ form.vars.name }}_Ctrl">
     {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-horizontal')|trim}) %}
     {% set method = method|upper %}
     {% if method in ["GET", "POST"] %}
@@ -30,16 +39,9 @@
     {% else %}
         {% set form_method = "POST" %}
     {% endif %}
-    <form name="{{ form.vars.name }}" ng-submit="submit()" method="{{ form_method|lower }}" action="{{ action }}"{% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}{% if multipart %} enctype="multipart/form-data"{% endif %}>
+    <form ng-bind-html-unsafe="formResponse" ng-controller="angSymForm_{{ form.vars.name }}_Ctrl" name="{{ form.vars.name }}" ng-submit="submit()" {% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}{% if multipart %} enctype="multipart/form-data"{% endif %}>
     {% if form_method != method %}
         <input type="hidden" name="_method" value="{{ method }}"/>
     {% endif %}
     {% endspaceless %}
 {% endblock form_start %}
-
-{% block form_end %}
-    {% spaceless %}
-    {{- parent() -}}
-    </div>
-    {% endspaceless %}
-{% endblock form_end %}
