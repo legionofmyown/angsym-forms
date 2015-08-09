@@ -5,6 +5,7 @@ namespace Legionofmyown\AngsymBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\Request;
 
 class AngsymController extends Controller
 {
@@ -15,16 +16,21 @@ class AngsymController extends Controller
      * @param $module string
      * @return array
      */
-    public function getFormAction($name, $module)
+    public function getFormAction(Request $request, $name, $module)
     {
+        $action = $request->get('action', '');
+        $method = $request->get('method', 'POST');
+
         $this->get('twig')->addGlobal('angsym_module', $module);
+        $this->get('twig')->addGlobal('angsym_action', $action);
+        $this->get('twig')->addGlobal('angsym_method', $method);
 
         $parts = explode(':', $name);
         $parts[0] = '\\' . $parts[0] . '\\Form';
 
         $name = join('\\', $parts);
 
-        $form = $this->createForm(new $name());
+        $form = $this->createForm($f = new $name());
 
         return [
             'form' => $form->createView(),

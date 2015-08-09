@@ -16,8 +16,8 @@
     {% spaceless %}
     <script>
         angular.module('{{ angsym_module }}').controller('angSymForm_{{ form.vars.name }}_Ctrl', function ($scope) {
-            $scope.action = '{{ action }}';
-            $scope.method = '{{ form_method|upper }}';
+            $scope.action = '{{ angsym_action }}';
+            $scope.method = '{{ angsym_method|upper|default('POST') }}';
             $scope.data = {};
 
             $scope.submit = function() {
