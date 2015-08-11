@@ -10,13 +10,14 @@ use Symfony\Component\HttpFoundation\Request;
 class AngsymController extends Controller
 {
     /**
-     * @Route("/angsymform/{name}/{module}", name="angsym_getform")
+     * @Route("/angsymform/{module}/{form}", name="angsym_getform")
      * @Template("AngsymBundle:AngForm:form.html.twig")
-     * @param $name string
+     * @param $request Request
      * @param $module string
+     * @param $form string
      * @return array
      */
-    public function getFormAction(Request $request, $name, $module)
+    public function getFormAction(Request $request, $module, $form)
     {
         $action = $request->get('action', '');
         $method = $request->get('method', 'POST');
@@ -25,15 +26,15 @@ class AngsymController extends Controller
         $this->get('twig')->addGlobal('angsym_action', $action);
         $this->get('twig')->addGlobal('angsym_method', $method);
 
-        $parts = explode(':', $name);
+        $parts = explode(':', $form);
         $parts[0] = '\\' . $parts[0] . '\\Form';
 
         $name = join('\\', $parts);
 
-        $form = $this->createForm($f = new $name());
+        $formObj = $this->createForm(new $name());
 
         return [
-            'form' => $form->createView(),
+            'form' => $formObj->createView(),
         ];
     }
 }
