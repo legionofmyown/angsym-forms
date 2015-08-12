@@ -15,10 +15,11 @@
 {% block form_start %}
     {% spaceless %}
     <script>
-        angular.module('{{ angsym_module }}').controller('angSymForm_{{ form.vars.name }}_Ctrl', function ($scope) {
+        angular.module('{{ angsym_module }}').controller('angSymForm_{{ form.vars.name }}_Ctrl', function ($scope, $http) {
             $scope.action = '{{ angsym_action }}';
             $scope.method = '{{ angsym_method|upper|default('POST') }}';
             $scope.data = {};
+            $scope.errors = {};
 
             $scope.submit = function() {
                 $http({
@@ -28,6 +29,9 @@
                     headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
                 }).success(function(data) {
                     console.log(data);
+                    if(data.errors) {
+                        $scope.errors = data.errors;
+                    }
                 });
             };
         });
@@ -45,3 +49,15 @@
     {% endif %}
     {% endspaceless %}
 {% endblock form_start %}
+
+{% block form_errors -%}
+    <span ng-show="errors.length > 0">
+    {% if form.parent %}<span class="help-block">{% else %}<div class="alert alert-danger">{% endif %}
+    <ul class="list-unstyled">
+        {%- for error in errors -%}
+            <li ng-repeat="error in errors"><span class="glyphicon glyphicon-exclamation-sign"></span> {{ '{{ error }}' }}</li>
+        {%- endfor -%}
+    </ul>
+    {% if form.parent %}</span>{% else %}</div>{% endif %}
+    </span>
+{%- endblock form_errors %}
