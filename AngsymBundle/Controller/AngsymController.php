@@ -26,15 +26,9 @@ class AngsymController extends Controller
         $this->get('twig')->addGlobal('angsym_action', $action);
         $this->get('twig')->addGlobal('angsym_method', $method);
 
-        $parts = explode(':', $form);
-        $parts[0] = '\\' . $parts[0] . '\\Form';
-
-        $name = join('\\', $parts);
-
-        $formObj = $this->createForm(new $name());
-
         return [
-            'form' => $formObj->createView(),
+            'form' => $this->createForm(new $form())->createView(),
         ];
     }
+
 }

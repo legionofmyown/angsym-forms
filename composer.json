@@ -3,7 +3,7 @@
     "description": "Symfony2 forms presentation and handling with Angular.js",
     "version": "1.0.0",
     "type": "library",
-    "keywords": ["angular", "symfony", "form"],
+    "keywords": ["angular", "symfony", "form", "ajax"],
     "homepage": "https://github.com/legionofmyown/angsym-forms",
     "license": "MIT",
     "authors": [
@@ -19,7 +19,7 @@
         "docs": "https://github.com/legionofmyown/angsym-forms/blob/master/README.md"
     },
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.5.0"
     },
     "autoload": {
         "psr-4": {

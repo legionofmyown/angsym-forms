@@ -20,15 +20,17 @@
             $scope.method = '{{ angsym_method|upper|default('POST') }}';
             $scope.data = {};
             $scope.errors = {};
+            $scope.disableSubmit = false;
 
             $scope.submit = function() {
+                $scope.disableSubmit = true;
                 $http({
                     method  : $scope.method,
                     url     : $scope.action,
                     data    : $scope.data,
                     headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
                 }).success(function(data) {
-                    console.log(data);
+                    $scope.disableSubmit = false;
                     if(data.errors) {
                         $scope.errors = data.errors;
                     }
@@ -51,13 +53,25 @@
 {% endblock form_start %}
 
 {% block form_errors -%}
-    <span ng-show="errors.length > 0">
-    {% if form.parent %}<span class="help-block">{% else %}<div class="alert alert-danger">{% endif %}
-    <ul class="list-unstyled">
-        {%- for error in errors -%}
-            <li ng-repeat="error in errors"><span class="glyphicon glyphicon-exclamation-sign"></span> {{ '{{ error }}' }}</li>
-        {%- endfor -%}
-    </ul>
-    {% if form.parent %}</span>{% else %}</div>{% endif %}
+    <span ng-show="errors.{{ id }}.length > 0">
+        <div class="alert alert-danger">
+            <ul class="list-unstyled">
+                <li ng-repeat="error in errors.{{ id }}"><span class="glyphicon glyphicon-exclamation-sign"></span> {{ '{{ error }}' }}</li>
+            </ul>
+        </div>
     </span>
 {%- endblock form_errors %}
+
+{%- block submit_widget -%}
+    {%- if label is empty -%}
+        {%- if label_format is not empty -%}
+            {% set label = label_format|replace({
+            '%name%': name,
+            '%id%': id,
+            }) %}
+        {%- else -%}
+            {% set label = name|humanize %}
+        {%- endif -%}
+    {%- endif -%}
+    <button ng-disabled="disableSubmit" type="submit" {{ block('button_attributes') }}>{{ label|trans({}, translation_domain) }}</button>
+{%- endblock submit_widget -%}

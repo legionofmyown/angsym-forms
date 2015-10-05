@@ -4,3 +4,7 @@ services:
         arguments: [@twig.extension.httpkernel]
         tags:
             - { name: twig.extension }
+
+    angsym.form:
+        class: Legionofmyown\AngsymBundle\Service\FormService
+        arguments: [@form.factory]
